@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Diamond Royale Detailing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #080808; --white: #f5f5f0; --grey: #1a1a1a; --mid: #2e2e2e;
+    --accent: #c8b97a; --dim: rgba(245,245,240,0.12);
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-condensed: 'Barlow Condensed', sans-serif;
+    --font-body: 'Barlow', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: var(--font-body); overflow-x: hidden; cursor: none; }
+
+  /* CURSOR */
+  .cursor { width:10px;height:10px;background:var(--white);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%); }
+  .cursor-ring { width:36px;height:36px;border:1px solid rgba(245,245,240,0.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transition:transform 0.35s cubic-bezier(0.23,1,0.32,1),width 0.3s,height 0.3s,border-color 0.3s;transform:translate(-50%,-50%); }
+
+  /* NAV */
+  nav { position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:24px 48px;background:linear-gradient(to bottom,rgba(8,8,8,0.96),transparent); }
+  .nav-logo { display:flex;align-items:center;gap:14px;text-decoration:none; }
+  .nav-logo svg { width:36px;height:36px; }
+  .nav-logo-text { font-family:var(--font-condensed);font-weight:800;font-size:1.25rem;letter-spacing:0.12em;color:var(--white);line-height:1.1;text-transform:uppercase; }
+  .nav-links { display:flex;gap:40px;list-style:none; }
+  .nav-links a { font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,245,240,0.65);text-decoration:none;transition:color 0.2s; }
+  .nav-links a:hover { color:var(--white); }
+  .nav-cta { font-family:var(--font-condensed);font-weight:700;font-size:0.85rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--black);background:var(--white);padding:10px 26px;text-decoration:none;transition:background 0.2s; }
+  .nav-cta:hover { background:var(--accent); }
+
+  /* ══ HERO — PHOTO ZONE 1 ══
+     Best: 1920×1080px dark car detail shot, wide angle.
+     Replace YOUR_HERO_PHOTO.jpg below. */
+  .hero { min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 48px 80px;position:relative;overflow:hidden; }
+  .hero-photo {
+    position:absolute;inset:0;
+    background-image:url('YOUR_HERO_PHOTO.jpg'); /* ← REPLACE */
+    background-size:cover;background-position:center 40%;background-color:#111;
+  }
+  .hero-photo::after { content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,0.98) 0%,rgba(8,8,8,0.5) 45%,rgba(8,8,8,0.18) 100%); }
+  /* Placeholder grid shown until real photo added */
+  .hero-photo.ph { background-image:none;background:repeating-linear-gradient(-45deg,#0e0e0e 0,#0e0e0e 22px,#121212 22px,#121212 23px); }
+  .hero-photo.ph::before { content:'[ PHOTO ZONE 1 — Hero background · 1920×1080px · dark car shot ]';position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;font-family:var(--font-condensed);font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,245,240,0.13);text-align:center;padding:0 60px; }
+
+  .hero-diamond-bg { position:absolute;right:-80px;top:50%;transform:translateY(-50%);width:680px;height:680px;opacity:0.04;z-index:1;animation:diamondPulse 6s ease-in-out infinite; }
+  @keyframes diamondPulse { 0%,100%{opacity:0.04;transform:translateY(-50%) scale(1);}50%{opacity:0.07;transform:translateY(-50%) scale(1.02);} }
+  .hero-eyebrow { font-size:0.72rem;font-weight:500;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;position:relative;z-index:2;opacity:0;animation:fadeUp 0.8s 0.2s forwards; }
+  .hero-title { font-family:var(--font-display);font-size:clamp(6rem,14vw,14rem);line-height:0.88;position:relative;z-index:2;opacity:0;animation:fadeUp 0.9s 0.35s forwards; }
+  .hero-title .outline { -webkit-text-stroke:1.5px rgba(245,245,240,0.4);color:transparent; }
+  .hero-sub-row { display:flex;align-items:flex-end;justify-content:space-between;margin-top:40px;position:relative;z-index:2;opacity:0;animation:fadeUp 0.9s 0.55s forwards; }
+  .hero-desc { font-size:1rem;font-weight:300;line-height:1.7;color:rgba(245,245,240,0.55);max-width:380px; }
+  .hero-cta-group { display:flex;gap:16px;align-items:center; }
+  .hero-scroll-hint { position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2;opacity:0;animation:fadeIn 1s 1.2s forwards,bounce 2s 2s infinite; }
+  .hero-scroll-hint span { font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase; }
+  .hero-scroll-hint .bar { width:1px;height:40px;background:linear-gradient(to bottom,var(--white),transparent); }
+
+  /* BUTTONS */
+  .btn-primary { font-family:var(--font-condensed);font-weight:700;font-size:1rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--black);background:var(--white);padding:16px 40px;text-decoration:none;display:inline-block;transition:background 0.2s,transform 0.2s; }
+  .btn-primary:hover { background:var(--accent);transform:translateY(-2px); }
+  .btn-ghost { font-family:var(--font-condensed);font-weight:700;font-size:1rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,245,240,0.65);background:transparent;padding:16px 40px;text-decoration:none;border:1px solid var(--dim);display:inline-block;transition:color 0.2s,border-color 0.2s; }
+  .btn-ghost:hover { color:var(--white);border-color:rgba(245,245,240,0.4); }
+
+  /* MARQUEE */
+  .marquee-wrap { border-top:1px solid var(--dim);border-bottom:1px solid var(--dim);padding:18px 0;overflow:hidden;background:var(--grey); }
+  .marquee-track { display:flex;white-space:nowrap;animation:marquee 20s linear infinite; }
+  .marquee-item { font-family:var(--font-condensed);font-weight:700;font-size:0.85rem;letter-spacing:0.22em;text-transform:uppercase;color:rgba(245,245,240,0.35);padding:0 40px;flex-shrink:0; }
+  .marquee-item .dot { color:var(--accent);margin-right:40px; }
+  @keyframes marquee { from{transform:translateX(0);}to{transform:translateX(-50%);} }
+
+  /* SECTION SHARED */
+  .section { padding:120px 48px; }
+  .section-label { font-size:0.7rem;font-weight:500;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:16px; }
+  .section-title { font-family:var(--font-display);font-size:clamp(3.5rem,7vw,7rem);line-height:0.9; }
+
+  /* ══ SERVICES — PHOTO ZONES 2–7 ══
+     Each card has a 200px image slot at top.
+     Best: 600×360px. Suggested shots noted in data-label. */
+  .services-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:80px; }
+  .service-card { background:var(--grey);position:relative;overflow:hidden;transition:background 0.3s;cursor:none; }
+  .service-card::before { content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 0.35s; }
+  .service-card:hover { background:#212121; }
+  .service-card:hover::before { transform:scaleX(1); }
+  .service-img { width:100%;height:200px;background-size:cover;background-position:center;background-color:#111;position:relative;overflow:hidden; }
+  .service-img::after { content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(26,26,26,1) 100%); }
+  .service-img.ph { background-image:none!important;background:repeating-linear-gradient(45deg,#111 0,#111 14px,#141414 14px,#141414 15px);display:flex;align-items:center;justify-content:center; }
+  .service-img.ph::before { content:attr(data-label);font-family:var(--font-condensed);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(245,245,240,0.15);text-align:center;padding:0 16px;position:relative;z-index:1; }
+  .service-body { padding:32px 40px 48px; }
+  .service-number { font-family:var(--font-display);font-size:5rem;color:rgba(245,245,240,0.06);line-height:1;margin-bottom:16px;transition:color 0.3s; }
+  .service-card:hover .service-number { color:rgba(200,185,122,0.1); }
+  .service-name { font-family:var(--font-condensed);font-weight:800;font-size:1.6rem;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:12px; }
+  .service-desc { font-size:0.9rem;font-weight:300;line-height:1.75;color:rgba(245,245,240,0.5); }
+  .service-price { margin-top:24px;font-family:var(--font-condensed);font-weight:700;font-size:1.1rem;letter-spacing:0.08em;color:var(--accent); }
+
+  /* ══ GALLERY — PHOTO ZONES 8–13 ══
+     Horizontal drag-scroll strip. 420×560px per image.
+     Mix: finished cars, close-ups, before/afters. */
+  .gallery-section { padding:80px 0;overflow:hidden; }
+  .gallery-header { padding:0 48px;margin-bottom:48px; }
+  .gallery-scroll { display:flex;gap:3px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;cursor:grab; }
+  .gallery-scroll::-webkit-scrollbar { display:none; }
+  .gallery-scroll:active { cursor:grabbing; }
+  .gallery-item { flex-shrink:0;width:420px;height:560px;background-size:cover;background-position:center;background-color:#111;position:relative;overflow:hidden; }
+  .gallery-item::after { content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,0.75) 0%,transparent 50%);opacity:0;transition:opacity 0.3s; }
+  .gallery-item:hover::after { opacity:1; }
+  .gallery-item.ph { background-image:none!important;background:repeating-linear-gradient(-45deg,#111 0,#111 18px,#141414 18px,#141414 19px);display:flex;align-items:center;justify-content:center; }
+  .gallery-item.ph::before { content:attr(data-label);font-family:var(--font-condensed);font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,245,240,0.14);text-align:center;padding:0 32px;z-index:1; }
+  .gallery-caption { position:absolute;bottom:0;left:0;right:0;padding:20px 24px;z-index:2;font-family:var(--font-condensed);font-weight:700;font-size:0.85rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,245,240,0.85);opacity:0;transition:opacity 0.3s; }
+  .gallery-item:hover .gallery-caption { opacity:1; }
+
+  /* WHY US */
+  .why-section { padding:120px 48px;background:var(--grey);display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center; }
+  .why-left .section-title { margin-top:16px;margin-bottom:40px; }
+  .why-left p { font-size:1rem;font-weight:300;line-height:1.8;color:rgba(245,245,240,0.55);max-width:440px; }
+  .stats-grid { display:grid;grid-template-columns:1fr 1fr;gap:2px; }
+  .stat-box { background:var(--black);padding:40px 36px; }
+  .stat-num { font-family:var(--font-display);font-size:4.5rem;line-height:1; }
+  .stat-num sup { font-size:1.5rem;color:var(--accent);vertical-align:super; }
+  .stat-label { font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(245,245,240,0.4);margin-top:10px; }
+
+  /* PROCESS */
+  .process-section { padding:120px 48px; }
+  .process-header { display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:80px; }
+  .process-steps { display:grid;grid-template-columns:repeat(4,1fr);gap:2px; }
+  .step { padding:40px 32px;border-top:1px solid var(--dim); }
+  .step-num { font-family:var(--font-display);font-size:3.5rem;color:rgba(245,245,240,0.08);line-height:1;margin-bottom:24px; }
+  .step-title { font-family:var(--font-condensed);font-weight:700;font-size:1.2rem;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:12px; }
+  .step-desc { font-size:0.87rem;font-weight:300;line-height:1.75;color:rgba(245,245,240,0.45); }
+
+  /* TESTIMONIALS */
+  .testimonials { padding:120px 48px;background:var(--grey); }
+  .testimonials-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:60px; }
+  .testimonial-card { background:var(--black);padding:44px 40px; }
+  .stars { display:flex;gap:4px;margin-bottom:24px; }
+  .star { width:14px;height:14px;background:var(--accent);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); }
+  .testimonial-text { font-size:0.97rem;font-weight:300;line-height:1.8;color:rgba(245,245,240,0.65);margin-bottom:32px; }
+  .testimonial-author { font-family:var(--font-condensed);font-weight:700;font-size:0.95rem;letter-spacing:0.1em;text-transform:uppercase; }
+  .testimonial-car { font-size:0.78rem;color:rgba(245,245,240,0.35);margin-top:4px;letter-spacing:0.06em; }
+
+  /* ══ CTA BANNER — PHOTO ZONE 14 ══
+     Best: 1920×800px dark finished-car side shot.
+     Replace YOUR_CTA_PHOTO.jpg below. */
+  .cta-banner { padding:140px 48px;text-align:center;position:relative;overflow:hidden; }
+  .cta-banner-photo {
+    position:absolute;inset:0;
+    background-image:url('YOUR_CTA_PHOTO.jpg'); /* ← REPLACE */
+    background-size:cover;background-position:center;
+    background-attachment:fixed;background-color:#0d0d0d;
+  }
+  .cta-banner-photo::after { content:'';position:absolute;inset:0;background:rgba(8,8,8,0.78); }
+  .cta-banner-photo.ph { background-image:none;background:repeating-linear-gradient(135deg,#0d0d0d 0,#0d0d0d 28px,#101010 28px,#101010 29px); }
+  .cta-banner-photo.ph::before { content:'[ PHOTO ZONE 14 — CTA background · 1920×800px · finished car side shot ]';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-condensed);font-size:0.78rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,245,240,0.1);text-align:center;padding:0 80px; }
+  .cta-banner > *:not(.cta-banner-photo) { position:relative;z-index:2; }
+  .cta-banner .section-label { display:block;margin-bottom:20px; }
+  .cta-banner-title { font-family:var(--font-display);font-size:clamp(4rem,9vw,10rem);line-height:0.9;margin-bottom:48px; }
+  .cta-banner-title .outline { -webkit-text-stroke:1.5px rgba(245,245,240,0.35);color:transparent; }
+  .cta-group { display:flex;gap:16px;justify-content:center; }
+
+  /* FOOTER */
+  footer { background:var(--grey);padding:60px 48px 40px;border-top:1px solid var(--dim); }
+  .footer-top { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:60px; }
+  .footer-brand .nav-logo-text { font-size:1.4rem;margin-bottom:16px;display:block; }
+  .footer-brand p { font-size:0.85rem;font-weight:300;color:rgba(245,245,240,0.4);max-width:240px;line-height:1.7; }
+  .footer-links h4 { font-family:var(--font-condensed);font-weight:700;font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,245,240,0.4);margin-bottom:20px; }
+  .footer-links ul { list-style:none;display:flex;flex-direction:column;gap:12px; }
+  .footer-links a { font-size:0.9rem;font-weight:300;color:rgba(245,245,240,0.6);text-decoration:none;transition:color 0.2s; }
+  .footer-links a:hover { color:var(--white); }
+  .footer-bottom { display:flex;justify-content:space-between;align-items:center;padding-top:32px;border-top:1px solid var(--dim); }
+  .footer-copy { font-size:0.75rem;color:rgba(245,245,240,0.25);letter-spacing:0.06em; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);} }
+  @keyframes fadeIn { to{opacity:0.4;} }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(6px);} }
+  .reveal { opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease; }
+  .reveal.visible { opacity:1;transform:translateY(0); }
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    nav{padding:20px 24px;} .nav-links{display:none;}
+    .hero,.section,.process-section,.cta-banner{padding-left:24px;padding-right:24px;}
+    .hero{padding-bottom:60px;} .hero-title{font-size:clamp(4rem,18vw,8rem);}
+    .hero-sub-row{flex-direction:column;align-items:flex-start;gap:32px;}
+    .services-grid,.process-steps{grid-template-columns:1fr;}
+    .testimonials-grid{grid-template-columns:1fr;}
+    .why-section{grid-template-columns:1fr;padding:80px 24px;gap:60px;}
+    .stats-grid{grid-template-columns:1fr 1fr;}
+    footer{padding:60px 24px 32px;} .footer-top{flex-direction:column;gap:48px;}
+    .process-header{flex-direction:column;gap:24px;align-items:flex-start;}
+    .gallery-item{width:280px;height:380px;}
+    .gallery-header{padding:0 24px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg viewBox="0 0 80 80" fill="none">
+      <!-- Outer diamond -->
+      <polygon points="40,2 78,28 40,78 2,28" fill="none" stroke="white" stroke-width="2.5"/>
+      <!-- Inner facet lines from top point -->
+      <line x1="40" y1="2" x2="2" y2="28" stroke="white" stroke-width="1" opacity="0.4"/>
+      <line x1="40" y1="2" x2="78" y2="28" stroke="white" stroke-width="1" opacity="0.4"/>
+      <!-- Horizontal belt line -->
+      <line x1="2" y1="28" x2="78" y2="28" stroke="white" stroke-width="1.2" opacity="0.5"/>
+      <!-- Centre facet triangle -->
+      <polygon points="40,2 20,28 40,78 60,28" fill="none" stroke="white" stroke-width="1" opacity="0.35"/>
+    </svg>
+    <div class="nav-logo-text">Diamond<br>Royale<br>Detailing</div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#about">About Us</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Book Now</a>
+</nav>
+
+<!-- HERO · PHOTO ZONE 1 → replace YOUR_HERO_PHOTO.jpg in CSS, remove class "ph" -->
+<section class="hero">
+  <div class="hero-photo ph"></div>
+  <svg class="hero-diamond-bg" viewBox="0 0 80 80" fill="none">
+    <polygon points="40,2 78,28 40,78 2,28" fill="white"/>
+    <line x1="2" y1="28" x2="78" y2="28" stroke="black" stroke-width="0.8"/>
+    <polygon points="40,2 20,28 40,78 60,28" fill="none" stroke="black" stroke-width="0.6"/>
+  </svg>
+  <div style="position:relative;z-index:2;">
+    <p class="hero-eyebrow">Premium Car Detailing</p>
+    <h1 class="hero-title">Diamond<br><span class="outline">Royale</span></h1>
+    <div class="hero-sub-row">
+      <p class="hero-desc">Precision detailing for vehicles that demand the finest care. From a thorough exterior wash to full ceramic coating, we treat every car as a masterpiece.</p>
+      <div class="hero-cta-group">
+        <a href="#services" class="btn-primary">Our Services</a>
+        <a href="#contact" class="btn-ghost">Get a Quote</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint"><span>Scroll</span><div class="bar"></div></div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="dot">◆</span>Exterior Detail</span>
+    <span class="marquee-item"><span class="dot">◆</span>Interior Valet</span>
+    <span class="marquee-item"><span class="dot">◆</span>Ceramic Coating</span>
+    <span class="marquee-item"><span class="dot">◆</span>Paint Correction</span>
+    <span class="marquee-item"><span class="dot">◆</span>Engine Bay Clean</span>
+    <span class="marquee-item"><span class="dot">◆</span>Leather Treatment</span>
+    <span class="marquee-item"><span class="dot">◆</span>Exterior Detail</span>
+    <span class="marquee-item"><span class="dot">◆</span>Interior Valet</span>
+    <span class="marquee-item"><span class="dot">◆</span>Ceramic Coating</span>
+    <span class="marquee-item"><span class="dot">◆</span>Paint Correction</span>
+    <span class="marquee-item"><span class="dot">◆</span>Engine Bay Clean</span>
+    <span class="marquee-item"><span class="dot">◆</span>Leather Treatment</span>
+  </div>
+</div>
+
+<!-- SERVICES · PHOTO ZONES 2–7 → replace URLs in style attrs, remove class "ph" -->
+<section class="section" id="services">
+  <p class="section-label reveal">What We Offer</p>
+  <h2 class="section-title reveal">Our<br><span style="-webkit-text-stroke:1.5px rgba(245,245,240,0.3);color:transparent;">Services</span></h2>
+  <div class="services-grid">
+
+    <div class="service-card reveal">
+      <div class="service-img ph" data-label="ZONE 2 — Express Valet · soapy hand wash on panel · 600×360px" style="background-image:url('YOUR_SERVICE_01.jpg')"></div>
+      <div class="service-body">
+        <div class="service-number">01</div>
+        <h3 class="service-name">Express Valet</h3>
+        <p class="service-desc">A thorough exterior hand wash, wheel clean, tyre dressing, and interior vacuum. Perfect for regular upkeep.</p>
+        <p class="service-price">From £45</p>
+      </div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img ph" data-label="ZONE 3 — Full Detail · polisher on paintwork · 600×360px" style="background-image:url('YOUR_SERVICE_02.jpg')"></div>
+      <div class="service-body">
+        <div class="service-number">02</div>
+        <h3 class="service-name">Full Detail</h3>
+        <p class="service-desc">Comprehensive inside and out — deep interior clean, machine polish, protection wax, and glass treatment.</p>
+        <p class="service-price">From £150</p>
+      </div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img ph" data-label="ZONE 4 — Paint Correction · swirl marks / polished panel · 600×360px" style="background-image:url('YOUR_SERVICE_03.jpg')"></div>
+      <div class="service-body">
+        <div class="service-number">03</div>
+        <h3 class="service-name">Paint Correction</h3>
+        <p class="service-desc">Multi-stage machine polishing to eliminate swirl marks, scratches, and oxidation. Restores true paint depth.</p>
+        <p class="service-price">From £250</p>
+      </div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img ph" data-label="ZONE 5 — Ceramic Coating · water beads on dark paint · 600×360px" style="background-image:url('YOUR_SERVICE_04.jpg')"></div>
+      <div class="service-body">
+        <div class="service-number">04</div>
+        <h3 class="service-name">Ceramic Coating</h3>
+        <p class="service-desc">Professional-grade nano-ceramic protection delivering years of hydrophobic, scratch-resistant defence.</p>
+        <p class="service-price">From £450</p>
+      </div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img" style="background-image:url('IMG_1860.png');background-position:center top;"></div>
+      <div class="service-body">
+        <div class="service-number">05</div>
+        <h3 class="service-name">Interior Restore</h3>
+        <p class="service-desc">Steam clean, leather conditioning, odour elimination, and plastic restoration for a showroom-fresh cabin.</p>
+        <p class="service-price">From £120</p>
+      </div>
+    </div>
+
+    <div class="service-card reveal">
+      <div class="service-img ph" data-label="ZONE 7 — Engine Detail · clean engine bay · 600×360px" style="background-image:url('YOUR_SERVICE_06.jpg')"></div>
+      <div class="service-body">
+        <div class="service-number">06</div>
+        <h3 class="service-name">Engine Detail</h3>
+        <p class="service-desc">Safe degreasing, pressure rinse, and dressing of the engine bay — immaculate under the bonnet.</p>
+        <p class="service-price">From £80</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- GALLERY · PHOTO ZONES 8–13 → replace URLs in style attrs, remove class "ph" -->
+<section class="gallery-section" id="gallery">
+  <div class="gallery-header">
+    <p class="section-label reveal">Our Work</p>
+    <h2 class="section-title reveal">The Results</h2>
+  </div>
+  <div class="gallery-scroll" id="galleryScroll">
+    <div class="gallery-item" style="background-image:url('IMG_1393.jpeg');background-position:center;"><div class="gallery-caption">Exterior Detail</div></div>
+    <div class="gallery-item" style="background-image:url('IMG_1394.jpeg');background-position:center;"><div class="gallery-caption">Paint Finish</div></div>
+    <div class="gallery-item ph" data-label="ZONE 10 · Clean interior · 420×560px" style="background-image:url('YOUR_GALLERY_03.jpg')"><div class="gallery-caption">Interior Restore</div></div>
+    <div class="gallery-item ph" data-label="ZONE 11 · Ceramic water beads · 420×560px" style="background-image:url('YOUR_GALLERY_04.jpg')"><div class="gallery-caption">Ceramic Coating</div></div>
+    <div class="gallery-item ph" data-label="ZONE 12 · Wheel / tyre detail · 420×560px" style="background-image:url('YOUR_GALLERY_05.jpg')"><div class="gallery-caption">Wheel Detail</div></div>
+    <div class="gallery-item ph" data-label="ZONE 13 · Engine bay · 420×560px" style="background-image:url('YOUR_GALLERY_06.jpg')"><div class="gallery-caption">Engine Bay</div></div>
+  </div>
+</section>
+
+<!-- ABOUT US -->
+<section class="section" id="about" style="padding-bottom:0;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+
+    <!-- ══ PHOTO ZONE 15 ══
+         Portrait or lifestyle shot of Anthony / team at work.
+         Best: 800×1000px. Remove the inner ph div once photo is added,
+         replace with: <img src="YOUR_ABOUT_PHOTO.jpg" style="width:100%;aspect-ratio:4/5;object-fit:cover;"> -->
+    <div style="position:relative;">
+      <div style="width:100%;aspect-ratio:4/5;background:repeating-linear-gradient(-45deg,#111 0,#111 18px,#141414 18px,#141414 19px);display:flex;align-items:center;justify-content:center;">
+        <span style="font-family:var(--font-condensed);font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(245,245,240,0.13);text-align:center;padding:0 40px;">ZONE 15 — Founder / team photo · 800×1000px</span>
+      </div>
+      <div style="position:absolute;top:40px;left:-16px;width:4px;height:120px;background:var(--accent);"></div>
+    </div>
+
+    <div>
+      <p class="section-label reveal">Our Story</p>
+      <h2 class="section-title reveal" style="margin-bottom:40px;">Born from<br><span style="-webkit-text-stroke:1.5px rgba(245,245,240,0.3);color:transparent;">Ambition</span></h2>
+      <p class="reveal" style="font-size:1.05rem;font-weight:300;line-height:1.9;color:rgba(245,245,240,0.6);margin-bottom:24px;">
+        Diamond Royale Detailing wasn't built in a boardroom — it was built on drive. Founded in 2025 by Anthony, a self-starter with a passion for side hustles and a hunger for something more, the business grew from a simple belief: that every car deserves to be treated like a showpiece.
+      </p>
+      <p class="reveal" style="font-size:1.05rem;font-weight:300;line-height:1.9;color:rgba(245,245,240,0.6);margin-bottom:48px;">
+        What started as a passion became a profession. Anthony took that entrepreneurial spirit and channelled it into a premium detailing service that refuses to cut corners — delivering results that speak louder than any sales pitch.
+      </p>
+      <div class="reveal" style="display:flex;align-items:center;gap:24px;padding-top:32px;border-top:1px solid var(--dim);">
+        <div>
+          <div style="font-family:var(--font-condensed);font-weight:800;font-size:1.2rem;letter-spacing:0.08em;text-transform:uppercase;">Anthony</div>
+          <div style="font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-top:4px;">Founder & CEO</div>
+        </div>
+        <div style="width:1px;height:40px;background:var(--dim);"></div>
+        <div style="font-size:0.82rem;font-weight:300;color:rgba(245,245,240,0.4);line-height:1.6;">Est. 2025<br>Diamond Royale Detailing</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-section" id="about">
+  <div class="why-left reveal">
+    <p class="section-label">Why Choose Us</p>
+    <h2 class="section-title">Built on<br>Precision</h2>
+    <p>We don't just clean cars — we restore them. Every vehicle that comes through us is treated with the same care and attention to detail regardless of make or model. No shortcuts, no rush jobs.</p>
+    <br>
+    <p>Using only professional-grade products, our trained team delivers results that speak for themselves. Based locally, trusted widely.</p>
+    <br>
+    <a href="#contact" class="btn-primary" style="margin-top:16px;">Book a Detail</a>
+  </div>
+  <div class="stats-grid reveal">
+    <div class="stat-box"><div class="stat-num">500<sup>+</sup></div><div class="stat-label">Cars Detailed</div></div>
+    <div class="stat-box"><div class="stat-num">5<sup>★</sup></div><div class="stat-label">Average Rating</div></div>
+    <div class="stat-box"><div class="stat-num">3<sup>+</sup></div><div class="stat-label">Years Experience</div></div>
+    <div class="stat-box"><div class="stat-num">100<sup>%</sup></div><div class="stat-label">Satisfaction</div></div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section" id="process">
+  <div class="process-header">
+    <div>
+      <p class="section-label reveal">How It Works</p>
+      <h2 class="section-title reveal">The Process</h2>
+    </div>
+    <a href="#contact" class="btn-primary reveal">Book Now</a>
+  </div>
+  <div class="process-steps">
+    <div class="step reveal"><div class="step-num">01</div><h3 class="step-title">Get a Quote</h3><p class="step-desc">Tell us your vehicle and the service you need. We'll give you a transparent, no-obligation quote.</p></div>
+    <div class="step reveal"><div class="step-num">02</div><h3 class="step-title">Book a Time</h3><p class="step-desc">Choose a time and date that works for you. We'll come to you or you can drop off.</p></div>
+    <div class="step reveal"><div class="step-num">03</div><h3 class="step-title">We Get to Work</h3><p class="step-desc">Sit back while we take care of every inch. We update you throughout the process.</p></div>
+    <div class="step reveal"><div class="step-num">04</div><h3 class="step-title">Drive Away</h3><p class="step-desc">Collect your freshly detailed vehicle looking better than the day it left the showroom.</p></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="reviews">
+  <p class="section-label reveal">Client Reviews</p>
+  <h2 class="section-title reveal">What They Say</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal">
+      <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+      <p class="testimonial-text">"Absolutely transformed my BMW. The paint correction was flawless — better than when I first bought the car. Won't go anywhere else."</p>
+      <div class="testimonial-author">James H.</div><div class="testimonial-car">BMW M3 Competition</div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+      <p class="testimonial-text">"Had the full interior restore done and I couldn't believe the difference. Every stain gone, smells incredible. Highly recommend."</p>
+      <div class="testimonial-author">Sarah M.</div><div class="testimonial-car">Range Rover Sport</div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+      <p class="testimonial-text">"Professional, punctual, and the results are phenomenal. The ceramic coating has kept my car looking pristine for months now."</p>
+      <div class="testimonial-author">Daniel K.</div><div class="testimonial-car">Porsche 911 Carrera</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER · PHOTO ZONE 14 → replace YOUR_CTA_PHOTO.jpg in CSS, remove class "ph" -->
+<section class="cta-banner" id="contact">
+  <div class="cta-banner-photo ph"></div>
+  <span class="section-label">Ready to Book?</span>
+  <h2 class="cta-banner-title reveal">Book Your<br><span class="outline">Detail</span><br>Today</h2>
+  <div class="cta-group reveal">
+    <a href="tel:+447700000000" class="btn-primary">Call Us Now</a>
+    <a href="mailto:hello@diamondroyaledetailing.co.uk" class="btn-ghost">Email Us</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="nav-logo-text">Diamond Royale<br>Detailing</span>
+      <p>Premium car detailing services delivered with precision and passion.</p>
+    </div>
+    <div class="footer-links"><h4>Services</h4><ul><li><a href="#">Express Valet</a></li><li><a href="#">Full Detail</a></li><li><a href="#">Paint Correction</a></li><li><a href="#">Ceramic Coating</a></li></ul></div>
+    <div class="footer-links"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Gallery</a></li><li><a href="#">Reviews</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div class="footer-links"><h4>Contact</h4><ul><li><a href="tel:+447700000000">+44 7700 000000</a></li><li><a href="mailto:hello@diamondroyaledetailing.co.uk">hello@diamondroyaledetailing.co.uk</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Diamond Royale Detailing. All rights reserved.</p>
+    <p class="footer-copy">Built with precision.</p>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function tick(){cursor.style.transform=`translate(${mx-5}px,${my-5}px)`;rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.transform=`translate(${rx-18}px,${ry-18}px)`;requestAnimationFrame(tick);})();
+
+  // Scroll reveal
+  new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);observer.unobserve(e.target);}});
+  },{threshold:0.12}).observe;
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);observer.unobserve(e.target);}});
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  // Cursor expand
+  document.querySelectorAll('a,button,.service-card,.gallery-item').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ring.style.width='60px';ring.style.height='60px';ring.style.borderColor='rgba(200,185,122,0.6)';});
+    el.addEventListener('mouseleave',()=>{ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='rgba(245,245,240,0.5)';});
+  });
+
+  // Gallery drag-scroll
+  const gs=document.getElementById('galleryScroll');
+  let down=false,sx,sl;
+  gs.addEventListener('mousedown',e=>{down=true;sx=e.pageX-gs.offsetLeft;sl=gs.scrollLeft;});
+  gs.addEventListener('mouseleave',()=>down=false);
+  gs.addEventListener('mouseup',()=>down=false);
+  gs.addEventListener('mousemove',e=>{if(!down)return;e.preventDefault();gs.scrollLeft=sl-(e.pageX-gs.offsetLeft-sx)*1.5;});
+</script>
+</body>
+</html>
